@@ -5,7 +5,7 @@ const CircularProgress = ({ value, max = 100 }) => {
     strokeDasharray - (strokeDasharray * percentage) / 100;
 
   return (
-    <div className="relative w-32 h-32 p-4">
+    <div className="relative w-32 h-32 p-4 text-center">
       <svg className="w-full h-full" viewBox="0 0 100 100">
         <circle
           className="text-gray-200 stroke-current"
@@ -16,7 +16,7 @@ const CircularProgress = ({ value, max = 100 }) => {
           fill="transparent"
         />
         <circle
-          className="text-blue-600 progress-ring__circle stroke-current"
+          className="text-[#00a651] progress-ring__circle stroke-current"
           strokeWidth="10"
           strokeLinecap="round"
           cx="50"
@@ -40,7 +40,7 @@ const CircularProgress = ({ value, max = 100 }) => {
           {value}
         </text>
       </svg>
-      <div className="absolute bottom-0 left-0 right-0 text-center text-sm mt-10-center ">
+      <div className="absolute bottom-0 left-0 right-0 text-center text-4sm mt-10-center ">
         نسبة التصويت
       </div>
     </div>
