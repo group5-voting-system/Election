@@ -4,9 +4,50 @@ import img2 from "../assets/jorimg.jpg";
 import img3 from "../assets/voting.jpg";
 import CountdownTimer from "../comonamt/timer";
 import ElectoralDistricts from "../comonamt/ElectoralDistricts";
-import ChatbotComponent from "../chatbooks/ChatbotComponent";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import VideoCall from "../comonamt/VideoCall";
+
+import ChatBox from "../chatbooks/newchat";
 
 const Home = () => {
+  const [advertisements, setAdvertisements] = useState([]);
+  const [fullName, setFullName] = useState("");
+  // هاي مشان تجيبلي كل الي عاملين اعلانات
+  useEffect(() => {
+    const fetchAdvertisements = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/advertisements"
+        );
+        setAdvertisements(response.data);
+      } catch (error) {
+        console.error("Error fetching advertisements:", error);
+      }
+    };
+
+    fetchAdvertisements();
+  }, []);
+
+  //رسالة الترحيبية هاي ختصه فيها
+  useEffect(() => {
+    const checkLocalVoteStatus = async () => {
+      try {
+        const national_id = "2000000201";
+        const response = await axios.get(
+          `http://localhost:5000/voting/${national_id}`
+        );
+        const fullNameFromResponse = `${response.data.FULL_NAME}`;
+        console.log("Fetched fullName:", fullNameFromResponse);
+        setFullName(fullNameFromResponse);
+      } catch (error) {
+        console.error("Error fetching vote status:", error);
+      }
+    };
+
+    checkLocalVoteStatus();
+  }, []);
+
   return (
     <div className="container mx-auto p-4">
       {/* Building image */}
@@ -33,7 +74,7 @@ const Home = () => {
         {/* Overlay for text */}
         <div className="absolute bottom-0 right-0 p-6 text-black bg-opacity-75 bg-white w-1/2 text-right rounded-lg shadow-lg">
           <h2 className="text-3xl mb-4 text-center font-semibold">
-            مرحبا :عبدالله السراحين
+            {fullName} مرحبا
           </h2>
           <p className="text-lg text-center">
             شكرا لتسجيل دخولك إلى موقعنا. نحن هنا لمساعدتك في عملية الانتخابات.
@@ -72,35 +113,35 @@ const Home = () => {
         الإعلانات الجديدة
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3].map((index) => (
+        {advertisements.slice(0, 3).map((ad) => (
           <div
-            key={index}
+            key={ad.ID}
             className="border p-4 bg-white rounded-lg shadow-lg transform transition-transform hover:scale-105"
           >
             <button className="bg-red-600 text-white px-4 py-2 mt-2 w-full rounded-lg transition-transform hover:bg-red-700">
-              قائمة نمو
+              {ad.DESCRIPTION}
             </button>
             <img
-              src={img2} // استخدام الصورة المستوردة
-              alt={`Candidate ${index}`}
+              src={ad.URL}
+              alt={`TITLE ${ad.TITLE}`}
               className="w-full h-32 object-cover mb-2 rounded-lg"
             />
-            <h3 className="font-bold text-lg mb-2">اسم المرشح</h3>
+            <h3 className="font-bold text-lg mb-2">{ad.TITLE}</h3>
           </div>
         ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20">
-        {[1, 2, 3].map((index) => (
+        {advertisements.slice(3, 6).map((ad) => (
           <div
-            key={index}
+            key={ad.ID}
             className="border p-4 bg-white rounded-lg shadow-lg transform transition-transform hover:scale-105"
           >
             <img
-              src={img2} // استخدام الصورة المستوردة
-              alt={`Candidate ${index}`}
+              src={ad.URL}
+              alt={`TITLE ${ad.TITLE}`}
               className="w-full h-32 object-cover mb-2 rounded-lg"
             />
-            <h3 className="font-bold text-lg mb-2">اسم المرشح</h3>
+            <h3 className="font-bold text-lg mb-2">{ad.TITLE}</h3>
           </div>
         ))}
       </div>
@@ -166,7 +207,9 @@ const Home = () => {
           ))}
         </div>
       </div>
-      <ChatbotComponent />
+
+      <ChatBox />
+      <VideoCall />
     </div>
   );
 };
